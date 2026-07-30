@@ -27,7 +27,7 @@ OUTPUT_PATH = None
 # Columns used to create the heatmap.  Change these names to match the CSV header.
 X_AXIS_COLUMN = "potential(V)"
 Y_AXIS_COLUMN = "time(s)"
-COLOR_COLUMN = "overpotential(V)"
+COLOR_COLUMN = "overpotential(mV)"
 STD_COLUMN = "standard_deviation"
 FIXED_CONDITIONS = {
     "Ni/Fe": 1,
