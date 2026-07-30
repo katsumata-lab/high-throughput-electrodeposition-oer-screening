@@ -19,6 +19,8 @@ cyclic-voltammetry (CV)-based OER evaluation.
 ├── identify_com_ports.py
 ├── parallel_electrodeposition.py
 ├── parallel_oer_measurement.py
+├── combine_OER_data.py
+├── calculate_overpotential.py
 ├── plot_overpotential_heatmap.py
 ├── visualize_hte_decision_tree.py
 ├── decision_tree_pie_viz.py
@@ -191,6 +193,163 @@ One output CSV is saved for each channel under:
 ```text
 output/OER/run_YYYYMMDD_HHMMSS/
 ```
+
+
+## OER data combination and preprocessing
+
+After the channel-specific OER measurements have been completed, run:
+
+```bash
+python combine_OER_data.py
+```
+
+By default, the script automatically selects the latest
+`output/OER/run_*` folder and reads:
+
+```text
+input/conditions/electrodeposition_conditions_96cond_1.csv
+```
+
+A specific run folder and condition file can be selected explicitly:
+
+```bash
+python combine_OER_data.py \
+  --input-dir output/OER/run_YYYYMMDD_HHMMSS \
+  --conditions input/conditions/electrodeposition_conditions_96cond_1.csv
+```
+
+The geometric working-electrode area can also be changed from its default value:
+
+```bash
+python combine_OER_data.py --area-cm2 0.0264
+```
+
+The row order of this condition file defines the channel labels `ch1`, `ch2`,
+..., `ch32`. Each raw Rodeostat file is associated with a channel through the
+COM-port value in the `port` column and the COM-port token contained in the raw
+filename.
+
+The raw Rodeostat CSV files do not contain column names. The script interprets
+the first three columns as:
+
+| Raw column | Assigned name | Unit |
+| --- | --- | --- |
+| 1 | `time_s` | s |
+| 2 | `potential_V` | V versus the printed pseudo-Ag/AgCl reference |
+| 3 | `current_uA` | µA |
+
+The default processing parameters are:
+
+```python
+WORKING_ELECTRODE_AREA_CM2 = 0.0264
+POTENTIAL_CORRECTION_TO_RHE_V = 1.169
+ZERO_POINT_DURATION_S = 1.0
+ZERO_POTENTIAL_TOLERANCE_V = 1.0e-6
+```
+
+For each channel, the current is converted to geometric current density as:
+
+```text
+current density (mA cm^-2)
+= current (µA) / 1000 / working-electrode area (cm^2)
+```
+
+A channel-specific zero-current correction is then applied. The mean current
+density measured during the initial 1 s waiting period at an unconverted
+potential of 0 V is calculated and subtracted from every current-density value
+in that channel.
+
+The potential is converted to the RHE scale as:
+
+```text
+E (V vs RHE) = E (V vs printed pseudo-Ag/AgCl) + 1.169 V
+```
+
+The combined output is saved in the selected run folder as:
+
+```text
+combined_current_density.csv
+```
+
+Its columns are:
+
+```text
+time_s
+potential_V_vs_RHE
+ch1
+ch2
+...
+ch32
+```
+
+The `ch1`–`ch32` columns contain zero-point-corrected current density in
+mA cm<sup>-2</sup>. If channel files have different numbers of rows, the
+longest valid file defines the output length and shorter channels are padded
+with blank cells after their final recorded value. A warning is printed if the
+overlapping time or potential axes differ between channels.
+
+## Cycle-resolved overpotential calculation
+
+After generating `combined_current_density.csv`, set its path near the top of
+`calculate_overpotential.py`:
+
+```python
+INPUT_CSV = Path(
+    "output/OER/run_YYYYMMDD_HHMMSS/combined_current_density.csv"
+)
+```
+
+Then run:
+
+```bash
+python calculate_overpotential.py
+```
+
+The default analysis settings are:
+
+```python
+TARGET_CURRENT_DENSITY_MA_CM2 = 1.0
+THEORETICAL_POTENTIAL_V_VS_RHE = 1.23
+MIN_CONSECUTIVE_POINTS = 3
+```
+
+The program identifies each anodic, increasing-potential sweep and calculates
+the potential at which each channel reaches 1.0 mA cm<sup>-2</sup>. A threshold
+crossing is accepted only when at least three consecutive data points are at or
+above the target current density. The target potential is obtained by linear
+interpolation between the nearest preceding point below the threshold and the
+first point of the accepted threshold run.
+
+The overpotential is calculated for each cycle as:
+
+```text
+overpotential (mV)
+= [E at 1.0 mA cm^-2 (V vs RHE) - 1.23 V] × 1000
+```
+
+Results are saved in the same run folder as:
+
+```text
+overpotential_at_target_current.csv
+```
+
+The output contains:
+
+```text
+channel
+cycle_1_overpotential_mV
+cycle_2_overpotential_mV
+cycle_3_overpotential_mV
+valid_cycle_count
+mean_overpotential_mV
+std_overpotential_mV
+```
+
+The mean is calculated from all valid cycles. The standard deviation is the
+sample standard deviation (`ddof=1`) and is calculated when at least two valid
+cycles are available. If a cycle does not reach the specified current-density
+criterion, the corresponding value is reported as `n.d.`. If no valid cycles
+are available, the mean and standard deviation are also reported as `n.d.`.
 
 ## Screening dataset
 
