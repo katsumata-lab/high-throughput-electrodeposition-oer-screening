@@ -18,8 +18,8 @@ from matplotlib import colors as mcolors
 import matplotlib.pyplot as plt
 
 
-DEFAULT_RESULTS_DIR = BASE_DIR / "OER_HTS" / "input" / "paper" / "results"
-DEFAULT_OUTPUT_DIR = BASE_DIR / "OER_HTS" / "output" / "paper" / "plots" / "heatmap"
+DEFAULT_RESULTS_DIR = BASE_DIR / "input" 
+DEFAULT_OUTPUT_DIR = BASE_DIR / "output"
 
 # Edit these values when running this script from an IDE.
 INPUT_CSV = DEFAULT_RESULTS_DIR / "96_conditions_results.csv"
