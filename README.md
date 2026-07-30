@@ -334,3 +334,11 @@ used to quantify the influence of model complexity on predictive performance.
 - Verify current ranges, potential limits, USB-hub capacity, electrode
   connections, and firmware compatibility before operating a modified hardware
   configuration.
+
+## License
+
+The original code in this repository is released under the MIT License.
+See the `LICENSE` file for details.
+
+The Rodeostat firmware and Python library are third-party components and remain
+subject to their respective licenses.
