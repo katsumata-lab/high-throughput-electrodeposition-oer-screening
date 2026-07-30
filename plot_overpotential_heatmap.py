@@ -18,8 +18,8 @@ from matplotlib import colors as mcolors
 import matplotlib.pyplot as plt
 
 
-DEFAULT_RESULTS_DIR = BASE_DIR / "input" 
-DEFAULT_OUTPUT_DIR = BASE_DIR / "output"
+DEFAULT_RESULTS_DIR = BASE_DIR / "input" / "results"
+DEFAULT_OUTPUT_DIR = BASE_DIR / "output" / "results"
 
 # Edit these values when running this script from an IDE.
 INPUT_CSV = DEFAULT_RESULTS_DIR / "96_conditions_results.csv"

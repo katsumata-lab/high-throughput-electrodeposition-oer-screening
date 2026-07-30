@@ -11,8 +11,8 @@ from decision_tree_pie_viz import DecisionTreePieVizConfig, save_decision_tree_p
 
 
 BASE_DIR = Path(__file__).resolve().parent
-INPUT_CSV = BASE_DIR / "input" / "96_conditions_results.csv"
-OUTPUT_IMAGE = BASE_DIR / "output" / "decision_tree_pies.png"
+INPUT_CSV = BASE_DIR / "input" / "results" / "96_conditions_results.csv"
+OUTPUT_IMAGE = BASE_DIR / "output" / "results" / "decision_tree_pies.png"
 TARGET_COLUMN = "overpotential(mV)"
 DEFAULT_FONT_SCALE = 1.3
 FEATURE_COLUMNS = [
