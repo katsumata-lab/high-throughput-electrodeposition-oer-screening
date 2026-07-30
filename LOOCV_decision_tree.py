@@ -12,8 +12,8 @@ from sklearn.tree import DecisionTreeRegressor
 d = None
 
 BASE_DIR = Path(__file__).resolve().parent
-INPUT_CSV = BASE_DIR / "OER_HTS" / "input" / "paper" / "results" / "96_conditions_results.csv"
-OUTPUT_CSV = BASE_DIR / "OER_HTS" / "output" / f"decision_tree_loocv_predictions_{d}.csv"
+INPUT_CSV = BASE_DIR / "input" / "results" / "96_conditions_results.csv"
+OUTPUT_CSV = BASE_DIR / "output" / f"decision_tree_loocv_predictions_{d}.csv"
 TARGET_COLUMN = "overpotential(mV)"
 FEATURE_COLUMNS = [
     "Ni/Fe",
