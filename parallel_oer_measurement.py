@@ -42,8 +42,8 @@ PRE_OER_STABILIZATION_MIN = 10
 # =======================================================
 # Cyclic voltammetry settings for OER evaluation
 # =======================================================
-CV_START_POTENTIAL_V = -0.2
-CV_END_POTENTIAL_V = 0.8
+CV_START_POTENTIAL_V = 0.0
+CV_END_POTENTIAL_V = 1.0
 CV_SCAN_RATE_MV_S = 10
 CV_NUMBER_OF_CYCLES = 3
 
